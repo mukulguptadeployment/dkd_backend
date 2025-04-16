@@ -1,31 +1,27 @@
-require("dotenv").config();
-const path = require("path");
-const express = require("express");
-const { Sequelize, DataTypes } = require("sequelize");
-const userRouter = require("./routes/UserRoute/userRouter");
+import dotenv from "dotenv";
+import path from "path";
+import express from "express";
+import userRouter from "./routes/UserRoute/userRouter.js";
+import sequelize from "./dbConnect.js";
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+    
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// EXTRACTING CREDENTIALS FROM ENVIORNMENT
-const database_name = process.env.DB_NAME;
-const username = process.env.DB_UserName;
-const password = process.env.DB_Password;
+dotenv.config();
 const PORT = process.env.PORT || 8000;
 
-// Connection
-const sequelize = new Sequelize(database_name, username, password, {
-  host: "localhost",
-  dialect: "mysql", // Change to 'postgres', 'sqlite', or 'mssql' if needed
-});
+try {
+  await sequelize.authenticate();
+  console.log("✅ Database connected successfully!");
+} catch (error) {
+  console.error("❌ Database connection failed:", error);
+}
 
-async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("✅ Database connected successfully!");
-  } catch (error) {
-    console.error("❌ Database connection failed:", error);
-  }
-};
 
 const app = express();
+
+app.use(express.json());
 
 app.get("/data.js", (req, res) => {
   res.sendFile(path.join(__dirname, "/static/data.js"));
@@ -43,5 +39,5 @@ app.use("/api/products", (req, res) => {
 
 // Starting server
 app.listen(PORT, () => {
-  console.log("Server is up and running........");
+  console.log("Server is up and running........", PORT);
 });

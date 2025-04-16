@@ -1,0 +1,122 @@
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
+
+const transporter = nodemailer.createTransport({
+  host: "smtpout.secureserver.net",
+  port: 465, // or 587
+  secure: true,
+  auth: {
+    user: process.env.SMTP_EMAIL,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
+
+// Function to send email
+const sendMail = async (to, subject, text, html) => {
+  try {
+    const mailOptions = {
+      from: '"Team TheSoftEra" <help@thesoftera.in>',
+      to,
+      subject,
+      text,
+      html,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.messageId);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
+const sendWeclomeMail = async (to, name) => {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to TheSoftera</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #ffffff;
+      margin: 30px auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .header {
+      background-color: #fde8ef;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      color: #d6336c;
+      margin: 0;
+    }
+    .content {
+      padding: 30px;
+    }
+    .content h2 {
+      color: #333;
+    }
+    .content p {
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #d6336c;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Welcome to TheSoftera 💖</h1>
+    </div>
+    <div class="content">
+      <h2>Hello ${name},</h2>
+      <p>
+        We’re so excited to have you here! You’ve just joined a community that celebrates comfort, quality, and effortless style.
+      </p>
+      <p>
+        As a new member, you now have access to our latest collections, cozy nightwear, trendy co-ords, and exclusive member-only deals.
+      </p>
+      <p>
+        Let’s start this beautiful journey together—because soft looks good on you.
+      </p>
+      <a href="https://thesoftera.com" class="btn">Start Shopping</a>
+    </div>
+    <div class="footer">
+      © 2025 TheSoftera. All rights reserved.<br>
+      <a href="https://thesoftera.com">thesoftera.com</a>
+    </div>
+  </div>
+
+</body>
+</html>
+`;
+  sendMail(to, "Welcome to The Soft Era", "", html);
+};
+
+export { sendMail, sendWeclomeMail };
